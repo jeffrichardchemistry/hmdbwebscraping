@@ -248,7 +248,8 @@ class Scraping:
             allspectra_tags = tableinformation[0].find_all("tbody")[0].find_all("tr")
 
             for tr in allspectra_tags:
-                if tr.find('td').get_text() == 'Experimental 1D NMR':
+                #if tr.find('td').get_text() == 'Experimental 1D NMR': #pega o ultimo dado experimental, 13C sempre fica deopis do 1H
+                if tr.find('td').get_text() == 'Experimental 1D NMR' and '1H NMR Spectrum' in [tds.get_text() for tds in tr.find_all('td')][1]:
                     label_experimental = [tds.get_text() for tds in tr.find_all('td')][1]
 
                     linktagEXP = tr.find('td').find_next_sibling('td').find_next_sibling('td').find_next_sibling('td').find_next_sibling('td').find('a')['href']
