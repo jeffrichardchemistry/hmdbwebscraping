@@ -11,6 +11,9 @@ import re
 import numpy as np
 
 import subprocess
+import os
+
+ABSOLUT_PATH = os.path.dirname(os.path.realpath(__file__))
 
 class Scraping:
     def __init__(self,pathname: str):
@@ -24,8 +27,8 @@ class Scraping:
         
         subprocess.run(f'echo "{self.txtfile}" >> {self.pathname}', shell=True)
     
-    def fit(self, initialID:int = 0, finalID:int = 2, time2wait:int = 4):
-        links = self._generateListOfLinks(initialID,finalID)
+    def fit(self, initialID:int = 0, finalID:int = 2, time2wait:int = 4, fromList:bool = False):
+        links = self._generateListOfLinks(initialID,finalID,fromList=fromList)
         for link in links:     
             #print(link)
             html = requests.get(link)
@@ -131,15 +134,27 @@ class Scraping:
 
         return name[0],smiles[0],inchi[0],casrn[0]   
         
-    def _generateListOfLinks(self,initialID:int, finalID:int):
-        links = []
-        for id_ in range(initialID, finalID):
+    def _generateListOfLinks(self,initialID:int, finalID:int, fromList=False):
+        if fromList:
+            path = ABSOLUT_PATH+'/data/list_hmdb.txt'
+            with open(path,'r') as file:
+                filecontant = file.readlines()    
+            filecontant = [name.strip() for name in filecontant]
             
-            qtd_zeros2complete = 7-len(str(id_))
-            hmdb_id = 'HMDB'+'0'*qtd_zeros2complete+str(id_)
-            link = 'https://hmdb.ca/metabolites/'+hmdb_id
-            links.append(link)
-        return links
+            links = []
+            for name in filecontant:
+                links.append('https://hmdb.ca/metabolites/'+name)
+            return links
+            
+        else:
+            links = []
+            for id_ in range(initialID, finalID):
+                
+                qtd_zeros2complete = 7-len(str(id_))
+                hmdb_id = 'HMDB'+'0'*qtd_zeros2complete+str(id_)
+                link = 'https://hmdb.ca/metabolites/'+hmdb_id
+                links.append(link)
+            return links
     
     def _getNMRdata(self, infolink:list, time2wait:int = 4):
 

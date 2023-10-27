@@ -14,6 +14,7 @@ setup(
     description='Python script to scraping NMR and other information from HMDB.',
     long_description = description,
     long_description_content_type = "text/markdown",
+    include_package_data=True,
     packages=['HMDBScraping'],
     install_requires=['pandas<=2.0.3', 'numpy<=1.24.4', 'bs4', 'selenium', 'requests'],
 	classifiers = [
